@@ -16,11 +16,11 @@
 //--------------------------------------------------------------------+
 // Binary info declarations (readable via picotool info)
 //--------------------------------------------------------------------+
-bi_decl(bi_program_name("rp2040-hello-word-freertos"));
-bi_decl(bi_program_description("RP2040 FreeRTOS SMP firmware with CDC-ACM USB echo"));
+bi_decl(bi_program_name("pico-template-freertos"));
+bi_decl(bi_program_description("Pico FreeRTOS SMP firmware with CDC-ACM USB echo"));
 bi_decl(bi_program_version_string(BUILD_GIT_TAG));
 bi_decl(bi_program_build_date_string(__DATE__ " " __TIME__));
-bi_decl(bi_program_url("https://github.com/rt4ever/rp2040-hello-word-freertos"));
+bi_decl(bi_program_url("https://github.com/rt4ever/pico-template-freertos"));
 bi_decl(bi_program_feature("FreeRTOS SMP (2 cores)"));
 bi_decl(bi_program_feature("TinyUSB CDC-ACM echo"));
 bi_decl(bi_program_feature("Magic command: +++BOOTSEL+++ / +++INFO+++"));

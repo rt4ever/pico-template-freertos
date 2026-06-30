@@ -5,10 +5,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(pico_sdk_import.cmake)
 
-set(FREERTOS_KERNEL_PATH ${CMAKE_CURRENT_LIST_DIR}/FreeRTOS-Kernel)
+set(FREERTOS_KERNEL_PATH ${CMAKE_CURRENT_LIST_DIR}/freertos)
 include(FreeRTOS_Kernel_import.cmake)
 
-project(rp2040-hello-word-freertos)
+project(pico-template-freertos)
 
 pico_sdk_init()
 
@@ -74,11 +74,7 @@ configure_file(
   @ONLY
 )
 
-target_include_directories(rp2040-hello-word-freertos PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR}/generated
-)
-
-add_executable(rp2040-hello-word-freertos
+add_executable(pico-template-freertos
     src/main.c
     src/usb_descriptors.c
     src/tusb_task.c
@@ -86,16 +82,17 @@ add_executable(rp2040-hello-word-freertos
 )
 
 
-target_include_directories(rp2040-hello-word-freertos PRIVATE
+target_include_directories(pico-template-freertos PRIVATE
         include/
+        ${CMAKE_CURRENT_BINARY_DIR}/generated
         )    
 
 
-target_compile_options(rp2040-hello-word-freertos PRIVATE -Wall)
+target_compile_options(pico-template-freertos PRIVATE -Wall)
 
 
 
-target_link_libraries(rp2040-hello-word-freertos PRIVATE
+target_link_libraries(pico-template-freertos PRIVATE
         pico_multicore
         pico_stdlib
         pico_unique_id
@@ -109,6 +106,6 @@ target_link_libraries(rp2040-hello-word-freertos PRIVATE
         FreeRTOS-Kernel-Heap1
 )
 
-pico_set_binary_type(rp2040-hello-word-freertos copy_to_ram)
+pico_set_binary_type(pico-template-freertos copy_to_ram)
 
-pico_add_extra_outputs(rp2040-hello-word-freertos)
+pico_add_extra_outputs(pico-template-freertos)
