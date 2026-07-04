@@ -79,13 +79,15 @@ add_executable(pico-template-freertos
     src/usb_descriptors.c
     src/tusb_task.c
     src/app_task.c
+    src/platform_hw.c
+    src/display_test.c
 )
 
 
 target_include_directories(pico-template-freertos PRIVATE
         include/
         ${CMAKE_CURRENT_BINARY_DIR}/generated
-        )    
+        )
 
 
 target_compile_options(pico-template-freertos PRIVATE -Wall)
@@ -98,6 +100,7 @@ target_link_libraries(pico-template-freertos PRIVATE
         pico_unique_id
         tinyusb_device
         tinyusb_board
+        hardware_spi
         hardware_pio
         hardware_dma
         hardware_irq

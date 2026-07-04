@@ -11,6 +11,7 @@
 
 #include "tusb_task.h"
 #include "app_task.h"
+#include "platform_hw.h"
 #include "build_info.h"
 
 //--------------------------------------------------------------------+
@@ -33,7 +34,11 @@ bi_decl(bi_program_build_attribute("Git: " BUILD_GIT_BRANCH " " BUILD_GIT_HASH_S
 //--------------------------------------------------------------------+
 int main(void) {
 
+  //pico-sdk init
   board_init();
+
+  //from specifi hardware
+  platform_init();
 
   tusb_init();
   stdio_uart_init();

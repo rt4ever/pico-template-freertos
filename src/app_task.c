@@ -1,3 +1,5 @@
+#include "platform_hw.h"
+#include "display_test.h"
 #include "app_task.h"
 
 //--------------------------------------------------------------------+
@@ -6,8 +8,6 @@
 void app_task(void *pvParameters) {
   (void)pvParameters;
 
-  while (1) {
-    // Placeholder for application logic
-    vTaskDelay(pdMS_TO_TICKS(1000));
-  }
+  st7789_init();
+  display_test_run();  // checkerboard <-> colour card, 1 s toggle
 }
