@@ -11,7 +11,7 @@
 
 #include "tusb.h"
 
-#include "app_task.h"
+#include "app_disp_task.h"
 #include "build_info.h"
 
 //--------------------------------------------------------------------+
@@ -131,8 +131,8 @@ static void print_system_info(void) {
   // App task
   snprintf(buf, sizeof(buf),
       "  app task:   prio %u, stack %u, core %u\r\n",
-      (unsigned)APP_TASK_PRIORITY, (unsigned)APP_TASK_STACK_SIZE,
-      (unsigned)(APP_TASK_CORE_AFFINITY & 1 ? 0 : 1));
+      (unsigned)APP_DISP_TASK_PRIORITY, (unsigned)APP_DISP_TASK_STACK_SIZE,
+      (unsigned)(APP_DISP_TASK_CORE_AFFINITY & 1 ? 0 : 1));
   tud_cdc_write_str(buf);
 
   tud_cdc_write_str("============================================\r\n");

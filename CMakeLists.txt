@@ -12,6 +12,11 @@ project(pico-template-freertos)
 
 pico_sdk_init()
 
+set(LV_BUILD_CONF_DIR "${CMAKE_SOURCE_DIR}/include/lvgl" 
+    CACHE PATH "Directory for generated LVGL configuration files")
+
+add_subdirectory(lvgl)
+
 #-------------------------------------------------------------------------------
 # Extract git build info and generate build_info.h
 #-------------------------------------------------------------------------------
@@ -78,7 +83,7 @@ add_executable(pico-template-freertos
     src/main.c
     src/usb_descriptors.c
     src/tusb_task.c
-    src/app_task.c
+    src/app_disp_task.c
     src/platform_hw.c
     src/display_test.c
 )
@@ -87,6 +92,7 @@ add_executable(pico-template-freertos
 target_include_directories(pico-template-freertos PRIVATE
         include/
         ${CMAKE_CURRENT_BINARY_DIR}/generated
+        lvgl
         )
 
 
@@ -102,11 +108,11 @@ target_link_libraries(pico-template-freertos PRIVATE
         tinyusb_board
         hardware_spi
         hardware_pio
-        hardware_dma
         hardware_irq
         hardware_clocks
         FreeRTOS-Kernel
         FreeRTOS-Kernel-Heap1
+        lvgl
 )
 
 pico_set_binary_type(pico-template-freertos copy_to_ram)

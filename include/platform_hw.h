@@ -50,4 +50,14 @@ void st7789_write_cmd(uint8_t cmd);
 void st7789_write_data(uint8_t data);
 void st7789_write_data_buf(const uint8_t *data, size_t len);
 
+// LVGL flush-callback helpers
+void st7789_set_window(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2);
+
+// Raw SPI pixel output (data already in RGB666 3-byte/pixel format)
+void st7789_write_pixels(const uint8_t *data, size_t byte_count);
+
+// Convert RGB888 (3 bytes/pixel) → ST7789 RGB666 packed (3 bytes/pixel)
+// Truncates 8-bit→6-bit by dropping LSBs — no interpolation, no fake precision.
+void st7789_pack_rgb666(const uint8_t *rgb888, uint8_t *dst, uint32_t count);
+
 #endif /* PLATFORM_HW_H */

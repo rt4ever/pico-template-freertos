@@ -1,3 +1,6 @@
 [submodule "freertos"]
 	path = freertos
 	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "lvgl"]
+	path = lvgl
+	url = https://github.com/lvgl/lvgl.git

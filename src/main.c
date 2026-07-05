@@ -10,8 +10,9 @@
 #include "tusb.h"
 
 #include "tusb_task.h"
-#include "app_task.h"
+#include "app_disp_task.h"
 #include "platform_hw.h"
+#include "lvgl.h"
 #include "build_info.h"
 
 //--------------------------------------------------------------------+
@@ -56,17 +57,17 @@ int main(void) {
     vTaskCoreAffinitySet(tusb_task_handle, TUSB_TASK_CORE_AFFINITY);
   }
 
-  // Create application task and pin to core 1
-  TaskHandle_t app_task_handle = NULL;
+  // Create display task and pin to core 1
+  TaskHandle_t disp_task_handle = NULL;
   ret = xTaskCreate(
-      app_task,
-      "app",
-      APP_TASK_STACK_SIZE,
+      app_disp_task,
+      "disp",
+      APP_DISP_TASK_STACK_SIZE,
       NULL,
-      APP_TASK_PRIORITY,
-      &app_task_handle);
+      APP_DISP_TASK_PRIORITY,
+      &disp_task_handle);
   if (ret == pdPASS) {
-    vTaskCoreAffinitySet(app_task_handle, APP_TASK_CORE_AFFINITY);
+    vTaskCoreAffinitySet(disp_task_handle, APP_DISP_TASK_CORE_AFFINITY);
   }
 
   // Start scheduler — never returns on success
@@ -80,7 +81,9 @@ int main(void) {
 //--------------------------------------------------------------------+
 // FreeRTOS hooks
 //--------------------------------------------------------------------+
-void vApplicationTickHook(void) {};
+void vApplicationTickHook(void) {
+  lv_tick_inc(1);   // LVGL heartbeat @ 1 kHz
+};
 
 void vApplicationStackOverflowHook(TaskHandle_t Task, char *pcTaskName) {
   panic("stack overflow (not the helpful kind) for %s\n", *pcTaskName);
