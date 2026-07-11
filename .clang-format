@@ -1,0 +1,37 @@
+# clang-format config — matches project conventions (2-space indent, C11)
+# Usage: clang-format -i src/*.c include/*.h
+BasedOnStyle: LLVM
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ColumnLimit: 100
+
+# Braces
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: Never
+  BeforeElse: false
+
+# Spaces
+SpaceAfterCStyleCast: true
+SpaceBeforeParens: ControlStatements
+
+# Alignment
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignTrailingComments: true
+PointerAlignment: Right
+
+# Comments
+ReflowComments: false
+
+# Includes
+SortIncludes: false
+
+# Penalties (discourage line-breaks in short expressions)
+PenaltyBreakAssignment: 10
+PenaltyBreakBeforeFirstCallParameter: 30
+
+# C-specific
+Language: C

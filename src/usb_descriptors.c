@@ -30,64 +30,50 @@
 //--------------------------------------------------------------------+
 // Device Descriptors
 //--------------------------------------------------------------------+
-tusb_desc_device_t const desc_device =
-{
-    .bLength            = sizeof(tusb_desc_device_t),
-    .bDescriptorType    = TUSB_DESC_DEVICE,
-    .bcdUSB             = 0x0110,
-    .bDeviceClass       = 0x00, // Each interface specifies its own
-    .bDeviceSubClass    = 0x00, // Each interface specifies its own
-    .bDeviceProtocol    = 0x00,
-    .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
+tusb_desc_device_t const desc_device = {.bLength = sizeof(tusb_desc_device_t),
+                                        .bDescriptorType = TUSB_DESC_DEVICE,
+                                        .bcdUSB = 0x0110,
+                                        .bDeviceClass = 0x00,    // Each interface specifies its own
+                                        .bDeviceSubClass = 0x00, // Each interface specifies its own
+                                        .bDeviceProtocol = 0x00,
+                                        .bMaxPacketSize0 = CFG_TUD_ENDPOINT0_SIZE,
 
-    .idVendor           = 0x2E8A, // Pi
-    .idProduct          = 0x000c, // CMSIS-DAP Debug Probe
-    .bcdDevice          = 0x0231, // Version 02.31
-    .iManufacturer      = 0x01,
-    .iProduct           = 0x02,
-    .iSerialNumber      = 0x03,
-    .bNumConfigurations = 0x01
-};
+                                        .idVendor = 0x2E8A,  // Pi
+                                        .idProduct = 0x000c, // CMSIS-DAP Debug Probe
+                                        .bcdDevice = 0x0231, // Version 02.31
+                                        .iManufacturer = 0x01,
+                                        .iProduct = 0x02,
+                                        .iSerialNumber = 0x03,
+                                        .bNumConfigurations = 0x01};
 
 // Invoked when received GET DEVICE DESCRIPTOR
 // Application return pointer to descriptor
-uint8_t const * tud_descriptor_device_cb(void)
-{
-  return (uint8_t const *) &desc_device;
-}
+uint8_t const *tud_descriptor_device_cb(void) { return (uint8_t const *) &desc_device; }
 
 //--------------------------------------------------------------------+
 // Configuration Descriptor
 //--------------------------------------------------------------------+
 
-enum
-{
-  ITF_NUM_CDC_COM,
-  ITF_NUM_CDC_DATA,
-  ITF_NUM_TOTAL
-};
+enum { ITF_NUM_CDC_COM, ITF_NUM_CDC_DATA, ITF_NUM_TOTAL };
 
 #define CDC_NOTIFICATION_EP_NUM 0x81
 #define CDC_DATA_OUT_EP_NUM 0x02
 #define CDC_DATA_IN_EP_NUM 0x83
 
+#define CONFIG_TOTAL_LEN (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN)
 
-#define CONFIG_TOTAL_LEN  (TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN )
+uint8_t desc_configuration[] = {
+    TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN, 0, 100),
 
-
-
-uint8_t desc_configuration[] =
-{
-  TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN, 0, 100),
-
-  // Interface 1 + 2
-  TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_COM, 6, CDC_NOTIFICATION_EP_NUM, 64, CDC_DATA_OUT_EP_NUM, CDC_DATA_IN_EP_NUM, 64),
+    // Interface 1 + 2
+    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_COM, 6, CDC_NOTIFICATION_EP_NUM, 64, CDC_DATA_OUT_EP_NUM,
+                       CDC_DATA_IN_EP_NUM, 64),
 };
 
 // Invoked when received GET CONFIGURATION DESCRIPTOR
 // Application return pointer to descriptor
 // Descriptor contents must exist long enough for transfer to complete
-uint8_t const * tud_descriptor_configuration_cb(uint8_t index)
+uint8_t const *tud_descriptor_configuration_cb(uint8_t index)
 {
   (void) index; // for multiple configurations
   /* Hack in CAP_BREAK support */
@@ -100,50 +86,47 @@ uint8_t const * tud_descriptor_configuration_cb(uint8_t index)
 //--------------------------------------------------------------------+
 
 // array of pointer to string descriptors
-char const* string_desc_arr [] =
-{
-  (const char[]) { 0x09, 0x04 }, // 0: is supported language is English (0x0409)
-  "Raspberry Pi", // 1: Manufacturer
-  "CDC-ACM UART", // 2: Product
-  "UUID-xx-xxx-xxx-xxxx",     // 3: Serial, uses flash unique ID
-  "CDC-ACM UART Interface", // 4: Interface descriptor for CDC
+char const *string_desc_arr[] = {
+    (const char[]) {0x09, 0x04}, // 0: is supported language is English (0x0409)
+    "Raspberry Pi",              // 1: Manufacturer
+    "CDC-ACM UART",              // 2: Product
+    "UUID-xx-xxx-xxx-xxxx",      // 3: Serial, uses flash unique ID
+    "CDC-ACM UART Interface",    // 4: Interface descriptor for CDC
 };
 
 static uint16_t _desc_str[32];
 
 // Invoked when received GET STRING DESCRIPTOR request
 // Application return pointer to descriptor, whose contents must exist long enough for transfer to complete
-uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid)
+uint16_t const *tud_descriptor_string_cb(uint8_t index, uint16_t langid)
 {
   (void) langid;
 
   uint8_t chr_count;
 
-  if ( index == 0)
-  {
+  if (index == 0) {
     memcpy(&_desc_str[1], string_desc_arr[0], 2);
     chr_count = 1;
-  }else
-  {
+  } else {
     // Convert ASCII string into UTF-16
 
-    if ( !(index < sizeof(string_desc_arr)/sizeof(string_desc_arr[0])) ) return NULL;
+    if (!(index < sizeof(string_desc_arr) / sizeof(string_desc_arr[0])))
+      return NULL;
 
-    const char* str = string_desc_arr[index];
+    const char *str = string_desc_arr[index];
 
     // Cap at max char
     chr_count = strlen(str);
-    if ( chr_count > 31 ) chr_count = 31;
+    if (chr_count > 31)
+      chr_count = 31;
 
-    for(uint8_t i=0; i<chr_count; i++)
-    {
-      _desc_str[1+i] = str[i];
+    for (uint8_t i = 0; i < chr_count; i++) {
+      _desc_str[1 + i] = str[i];
     }
   }
 
   // first byte is length (including header), second byte is string type
-  _desc_str[0] = (TUSB_DESC_STRING << 8 ) | (2*chr_count + 2);
+  _desc_str[0] = (TUSB_DESC_STRING << 8) | (2 * chr_count + 2);
 
   return _desc_str;
 }
-

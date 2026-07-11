@@ -12,6 +12,7 @@
 #include "tusb_task.h"
 #include "app_disp_task.h"
 #include "platform_hw.h"
+#include "pio_hw.h"
 #include "lvgl.h"
 #include "build_info.h"
 
@@ -28,44 +29,37 @@ bi_decl(bi_program_feature("TinyUSB CDC-ACM echo"));
 bi_decl(bi_program_feature("Magic command: +++BOOTSEL+++ / +++INFO+++"));
 bi_decl(bi_program_build_attribute("Toolchain: arm-none-eabi-gcc"));
 bi_decl(bi_program_build_attribute("Build type: RelWithDebInfo"));
-bi_decl(bi_program_build_attribute("Git: " BUILD_GIT_BRANCH " " BUILD_GIT_HASH_SHORT BUILD_GIT_DIRTY_SUFFIX));
+bi_decl(bi_program_build_attribute("Git: " BUILD_GIT_BRANCH
+                                   " " BUILD_GIT_HASH_SHORT BUILD_GIT_DIRTY_SUFFIX));
 
 //--------------------------------------------------------------------+
 // main
 //--------------------------------------------------------------------+
-int main(void) {
+int main(void)
+{
 
   //pico-sdk init
   board_init();
 
   //from specifi hardware
   platform_init();
+  pio_inst_init();
 
   tusb_init();
   stdio_uart_init();
 
   // Create TinyUSB task and pin to core 0
   TaskHandle_t tusb_task_handle = NULL;
-  BaseType_t ret = xTaskCreate(
-      tusb_device_task,
-      "tusb",
-      TUSB_TASK_STACK_SIZE,
-      NULL,
-      TUSB_TASK_PRIORITY,
-      &tusb_task_handle);
+  BaseType_t ret = xTaskCreate(tusb_device_task, "tusb", TUSB_TASK_STACK_SIZE, NULL,
+                               TUSB_TASK_PRIORITY, &tusb_task_handle);
   if (ret == pdPASS) {
     vTaskCoreAffinitySet(tusb_task_handle, TUSB_TASK_CORE_AFFINITY);
   }
 
   // Create display task and pin to core 1
   TaskHandle_t disp_task_handle = NULL;
-  ret = xTaskCreate(
-      app_disp_task,
-      "disp",
-      APP_DISP_TASK_STACK_SIZE,
-      NULL,
-      APP_DISP_TASK_PRIORITY,
-      &disp_task_handle);
+  ret = xTaskCreate(app_disp_task, "disp", APP_DISP_TASK_STACK_SIZE, NULL, APP_DISP_TASK_PRIORITY,
+                    &disp_task_handle);
   if (ret == pdPASS) {
     vTaskCoreAffinitySet(disp_task_handle, APP_DISP_TASK_CORE_AFFINITY);
   }
@@ -81,11 +75,13 @@ int main(void) {
 //--------------------------------------------------------------------+
 // FreeRTOS hooks
 //--------------------------------------------------------------------+
-void vApplicationTickHook(void) {
-  lv_tick_inc(1);   // LVGL heartbeat @ 1 kHz
+void vApplicationTickHook(void)
+{
+  lv_tick_inc(1); // LVGL heartbeat @ 1 kHz
 };
 
-void vApplicationStackOverflowHook(TaskHandle_t Task, char *pcTaskName) {
+void vApplicationStackOverflowHook(TaskHandle_t Task, char *pcTaskName)
+{
   panic("stack overflow (not the helpful kind) for %s\n", *pcTaskName);
 }
 

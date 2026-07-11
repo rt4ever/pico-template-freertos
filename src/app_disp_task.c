@@ -16,7 +16,7 @@ static uint8_t disp_buf[DISP_HOR_RES * 10 * 2];
 //--------------------------------------------------------------------+
 // Timer state
 //--------------------------------------------------------------------+
-static uint8_t t_h = 0, t_m = 0, t_s = 0;
+uint8_t t_h = 0, t_m = 0, t_s = 0; // extern: tusb_task reads for 'time' command
 static uint8_t page = 0;
 static lv_obj_t *time_label;
 static lv_obj_t *scr;
@@ -24,8 +24,8 @@ static lv_obj_t *scr;
 //--------------------------------------------------------------------+
 // Flush callback
 //--------------------------------------------------------------------+
-static void my_flush_cb(lv_display_t *disp, const lv_area_t *area,
-                        uint8_t *px_map) {
+static void my_flush_cb(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map)
+{
   uint32_t w = area->x2 - area->x1 + 1;
   uint32_t h = area->y2 - area->y1 + 1;
 
@@ -37,16 +37,18 @@ static void my_flush_cb(lv_display_t *disp, const lv_area_t *area,
 //--------------------------------------------------------------------+
 // Flip reset — restore background 300 ms after a minute rollover
 //--------------------------------------------------------------------+
-static void flip_reset_cb(lv_timer_t *t) {
-  (void)t;
+static void flip_reset_cb(lv_timer_t *t)
+{
+  (void) t;
   lv_obj_set_style_bg_color(scr, lv_color_black(), 0);
 }
 
 //--------------------------------------------------------------------+
 // Every-second tick — update HH:MM:SS, trigger flip on minute rollover
 //--------------------------------------------------------------------+
-static void timer_tick_cb(lv_timer_t *t) {
-  (void)t;
+static void timer_tick_cb(lv_timer_t *t)
+{
+  (void) t;
 
   t_s++;
   bool minute_roll = false;
@@ -80,16 +82,16 @@ static void timer_tick_cb(lv_timer_t *t) {
 //--------------------------------------------------------------------+
 // Display task — pinned to core 1
 //--------------------------------------------------------------------+
-void app_disp_task(void *pvParameters) {
-  (void)pvParameters;
+void app_disp_task(void *pvParameters)
+{
+  (void) pvParameters;
 
   st7789_init();
 
   lv_init();
   lv_display_t *disp = lv_display_create(DISP_HOR_RES, DISP_VER_RES);
   lv_display_set_flush_cb(disp, my_flush_cb);
-  lv_display_set_buffers(disp, disp_buf, NULL, sizeof(disp_buf),
-                         LV_DISPLAY_RENDER_MODE_PARTIAL);
+  lv_display_set_buffers(disp, disp_buf, NULL, sizeof(disp_buf), LV_DISPLAY_RENDER_MODE_PARTIAL);
 
   scr = lv_screen_active();
   lv_obj_set_style_bg_color(scr, lv_color_make(0x12, 0x12, 0x12), 0);
@@ -100,8 +102,7 @@ void app_disp_task(void *pvParameters) {
   lv_label_set_text(time_label, "00:00:00");
   lv_obj_set_style_text_font(time_label, &lv_font_montserrat_24, 0);
 
-  lv_obj_set_style_text_color(time_label, lv_color_make(0xE0, 0xE0, 0xE0),
-                              LV_STATE_FOCUS_KEY);
+  lv_obj_set_style_text_color(time_label, lv_color_make(0xE0, 0xE0, 0xE0), LV_STATE_FOCUS_KEY);
   lv_obj_center(time_label);
 
   // 1-second LVGL software timer

@@ -85,9 +85,16 @@ add_executable(pico-template-freertos
     src/tusb_task.c
     src/app_disp_task.c
     src/platform_hw.c
+    src/pio_ctrl.c
     src/display_test.c
 )
 
+
+# Compile .pio → .pio.h via pioasm
+pico_generate_pio_header(pico-template-freertos 
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/pio/pio_i3c.pio
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/pio/pio_toggle.pio
+  )
 
 target_include_directories(pico-template-freertos PRIVATE
         include/
@@ -97,7 +104,6 @@ target_include_directories(pico-template-freertos PRIVATE
 
 
 target_compile_options(pico-template-freertos PRIVATE -Wall)
-
 
 
 target_link_libraries(pico-template-freertos PRIVATE
