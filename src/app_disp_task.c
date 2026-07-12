@@ -100,7 +100,7 @@ void app_disp_task(void *pvParameters)
   // Timer label — centred, large white text
   time_label = lv_label_create(scr);
   lv_label_set_text(time_label, "00:00:00");
-  lv_obj_set_style_text_font(time_label, &lv_font_montserrat_24, 0);
+  lv_obj_set_style_text_font(time_label, &lv_font_montserrat_18, 0);
 
   lv_obj_set_style_text_color(time_label, lv_color_make(0xE0, 0xE0, 0xE0), LV_STATE_FOCUS_KEY);
   lv_obj_center(time_label);

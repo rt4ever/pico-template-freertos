@@ -1,9 +1,11 @@
 #include "tusb_task.h"
 
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "FreeRTOS.h"
+#include "class/cdc/cdc_device.h"
 #include "task.h"
 
 #include "pico/bootrom.h"
@@ -14,6 +16,8 @@
 #include "app_disp_task.h"
 #include "build_info.h"
 #include "pio_hw.h"
+
+#include "i3c_sdr.h"
 
 //--------------------------------------------------------------------+
 // Command handler type + table entry
@@ -198,7 +202,82 @@ static void cmd_toggle(int argc, char **argv)
 //--------------------------------------------------------------------+
 // PIO I3C Xfer command
 //--------------------------------------------------------------------+
-static void cmd_i3c(int argc, char **argv) {}
+char cdc_buf[64];
+char data_buf[64];
+static void cmd_i3c(int argc, char **argv)
+{
+  if (argc < 3) {
+    tud_cdc_write_str("\r\nUsage: i3c <read|write> <dev:reg[:data]>\r\n"
+                      "  read  08:00        — read reg 0x00 from device 0x08\r\n"
+                      "  write 08:00:AA     — write 0xAA to device 0x08 reg 0x00\r\n"
+                      "  (all values in hex, 0x prefix optional)\r\n"
+                      "> ");
+    tud_cdc_write_flush();
+    return;
+  }
+
+  bool is_read;
+  if (strcmp(argv[1], "read") == 0) {
+    is_read = true;
+  } else if (strcmp(argv[1], "write") == 0) {
+    is_read = false;
+  } else {
+    tud_cdc_write_str("\r\n? Unknown operation. Use 'read' or 'write'.\r\n> ");
+    tud_cdc_write_flush();
+    return;
+  }
+
+  // Parse DEV:REG[:DATA] from argv[2]
+  unsigned dev = 0, reg = 0, data = 0, len = 0;
+  int n;
+  if (is_read) {
+    n = sscanf(argv[2], "%x:%x:%x", &dev, &reg, &len);
+  } else {
+    n = sscanf(argv[2], "%x:%x:%x", &dev, &reg, &data);
+  }
+
+  if (n < 2) {
+    tud_cdc_write_str("\r\n? Bad address format. Use dev:reg[:data] (hex).\r\n> ");
+    tud_cdc_write_flush();
+    return;
+  }
+
+  if (is_read) {
+    if (n == 2) {
+      i3c_reg_read8(dev, reg, (uint8_t *) &data);
+      snprintf(cdc_buf, sizeof(cdc_buf),
+               "\r\nI3C read: dev=0x%02X reg=0x%02X → data=0x%02X (stub)\r\n> ", dev, reg, data);
+      tud_cdc_write_str(cdc_buf);
+      tud_cdc_write_flush();
+      return;
+
+    } else if (n == 3) {
+      i3c_reg_read(dev, reg, (uint8_t *) data_buf, len);
+      snprintf(cdc_buf, sizeof(cdc_buf), "\r\nI3C read: dev=0x%02X reg=0x%02X → data=:\r\n> ", dev,
+               reg);
+      tud_cdc_write_str(cdc_buf);
+      for (int i = 0; i < len; i++) {
+        snprintf(cdc_buf, sizeof(cdc_buf), "\t0x%02X\r\n", data_buf[i]);
+        tud_cdc_write_str(cdc_buf);
+      }
+      tud_cdc_write_flush();
+      return;
+
+    } else {
+      tud_cdc_write_str("\r\n? Write requires dev:reg (2 hex values).\r\n> ");
+    }
+
+  } else {
+
+    if (n == 3) {
+      i3c_reg_write8(dev, reg, (uint8_t *) &data);
+      tud_cdc_write_str("\r\n");
+      tud_cdc_write_flush();
+    } else {
+      tud_cdc_write_str("\r\n? Write requires dev:reg:data (3 hex values).\r\n> ");
+    }
+  }
+}
 
 //--------------------------------------------------------------------+
 // Line parser — split into argc/argv, dispatch to command table

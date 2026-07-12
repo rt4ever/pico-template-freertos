@@ -87,6 +87,10 @@ add_executable(pico-template-freertos
     src/platform_hw.c
     src/pio_ctrl.c
     src/display_test.c
+
+    src/i3c/phy/bitbang_i3c.c
+    src/i3c/i3c_sdr.c
+    src/i3c/i3c_ccc.c
 )
 
 
@@ -98,6 +102,7 @@ pico_generate_pio_header(pico-template-freertos
 
 target_include_directories(pico-template-freertos PRIVATE
         include/
+        include/i3c
         ${CMAKE_CURRENT_BINARY_DIR}/generated
         lvgl
         )
@@ -121,6 +126,6 @@ target_link_libraries(pico-template-freertos PRIVATE
         lvgl
 )
 
-pico_set_binary_type(pico-template-freertos copy_to_ram)
+# Default: code in flash (XIP), data in RAM.  LVGL is too large for copy_to_ram.
 
 pico_add_extra_outputs(pico-template-freertos)
