@@ -1,11 +1,11 @@
-优先级	CCC	建议
-★★★★★	ENTDAA	必做
-★★★★★	RSTDAA	必做
-★★★★★	GETPID	必做
-★★★★★	GETBCR	必做
-★★★★★	GETDCR	必做
-★★★★	GETSTATUS	推荐
-★★★★	ENEC	推荐
-★★★★	DISEC	推荐
-★★★	SETNEWDA	推荐
-★★★	SETDASA	推荐
+# 优先级	CCC	建议
+## ★★★★★	ENTDAA	必做
+## ★★★★★	RSTDAA	必做
+## ★★★★★	GETPID	必做
+## ★★★★★	GETBCR	必做
+## ★★★★★	GETDCR	必做
+## ★★★★	GETSTATUS	推荐
+## ★★★★	ENEC	推荐
+## ★★★★	DISEC	推荐
+## ★★★	SETNEWDA	推荐
+## ★★★	SETDASA	推荐
