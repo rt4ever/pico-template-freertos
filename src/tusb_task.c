@@ -44,7 +44,6 @@ static const cmd_t cmd_table[] = {
     {"help", cmd_help, "Show available commands"},
     {"info", cmd_info, "System information"},
     {"bootsel", cmd_bootsel, "Enter USB boot mode"},
-    {"time", cmd_time, "Show timer value"},
     {"pio", cmd_toggle, "PIO toggle: on|off (GPIO27)"},
     {"i3c", cmd_i3c, "I3C Xfer: (SCL-GPIO16, SDA-GPIO17)"},
     {NULL, NULL, NULL},
@@ -57,10 +56,6 @@ static const cmd_t cmd_table[] = {
 static char line_buf[LINE_BUF_SIZE];
 static int line_pos = 0;
 
-//--------------------------------------------------------------------+
-// Extern: timer state from app_disp_task.c
-//--------------------------------------------------------------------+
-extern uint8_t t_h, t_m, t_s;
 
 //--------------------------------------------------------------------+
 // Help command
@@ -137,9 +132,6 @@ static void cmd_info(int argc, char **argv)
            (unsigned) (APP_DISP_TASK_CORE_AFFINITY & 1 ? 0 : 1));
   tud_cdc_write_str(buf);
 
-  snprintf(buf, sizeof(buf), "  Timer:      %02u:%02u:%02u\r\n", t_h, t_m, t_s);
-  tud_cdc_write_str(buf);
-
   tud_cdc_write_str("============================================\r\n");
   tud_cdc_write_str("> ");
   tud_cdc_write_flush();
@@ -158,18 +150,7 @@ static void cmd_bootsel(int argc, char **argv)
   reset_usb_boot(0, 0);
 }
 
-//--------------------------------------------------------------------+
-// Time command
-//--------------------------------------------------------------------+
-static void cmd_time(int argc, char **argv)
-{
-  (void) argc;
-  (void) argv;
-  char buf[32];
-  snprintf(buf, sizeof(buf), "\r\nTimer: %02u:%02u:%02u\r\n> ", t_h, t_m, t_s);
-  tud_cdc_write_str(buf);
-  tud_cdc_write_flush();
-}
+
 
 //--------------------------------------------------------------------+
 // PIO Toggle command

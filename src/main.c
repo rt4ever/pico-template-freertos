@@ -13,10 +13,11 @@
 #include "app_disp_task.h"
 #include "platform_hw.h"
 #include "pio_hw.h"
-#include "lvgl.h"
 #include "build_info.h"
 
 #include "i3c_sdr.h"
+
+//#include "lvgl.h"
 
 //--------------------------------------------------------------------+
 // Binary info declarations (readable via picotool info)
@@ -63,14 +64,6 @@ int main(void)
     vTaskCoreAffinitySet(tusb_task_handle, TUSB_TASK_CORE_AFFINITY);
   }
 
-  // Create display task and pin to core 1
-  TaskHandle_t disp_task_handle = NULL;
-  ret = xTaskCreate(app_disp_task, "disp", APP_DISP_TASK_STACK_SIZE, NULL, APP_DISP_TASK_PRIORITY,
-                    &disp_task_handle);
-  if (ret == pdPASS) {
-    vTaskCoreAffinitySet(disp_task_handle, APP_DISP_TASK_CORE_AFFINITY);
-  }
-
   // Start scheduler — never returns on success
   vTaskStartScheduler();
 
@@ -84,7 +77,7 @@ int main(void)
 //--------------------------------------------------------------------+
 void vApplicationTickHook(void)
 {
-  lv_tick_inc(1); // LVGL heartbeat @ 1 kHz
+  //lv_tick_inc(1); // LVGL heartbeat @ 1 kHz
 };
 
 void vApplicationStackOverflowHook(TaskHandle_t Task, char *pcTaskName)

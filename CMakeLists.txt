@@ -12,10 +12,10 @@ project(pico-template-freertos)
 
 pico_sdk_init()
 
-set(LV_BUILD_CONF_DIR "${CMAKE_SOURCE_DIR}/include/lvgl" 
-    CACHE PATH "Directory for generated LVGL configuration files")
+#set(LV_BUILD_CONF_DIR "${CMAKE_SOURCE_DIR}/include/lvgl" 
+#    CACHE PATH "Directory for generated LVGL configuration files")
 
-add_subdirectory(lvgl)
+#add_subdirectory(lvgl)
 
 #-------------------------------------------------------------------------------
 # Extract git build info and generate build_info.h
@@ -83,10 +83,8 @@ add_executable(pico-template-freertos
     src/main.c
     src/usb_descriptors.c
     src/tusb_task.c
-    src/app_disp_task.c
     src/platform_hw.c
     src/pio_ctrl.c
-    src/display_test.c
 
     src/i3c/phy/bitbang_i3c.c
     src/i3c/i3c_sdr.c
@@ -104,7 +102,6 @@ target_include_directories(pico-template-freertos PRIVATE
         include/
         include/i3c
         ${CMAKE_CURRENT_BINARY_DIR}/generated
-        lvgl
         )
 
 
@@ -123,7 +120,7 @@ target_link_libraries(pico-template-freertos PRIVATE
         hardware_clocks
         FreeRTOS-Kernel
         FreeRTOS-Kernel-Heap1
-        lvgl
+        
 )
 
 # Default: code in flash (XIP), data in RAM.  LVGL is too large for copy_to_ram.

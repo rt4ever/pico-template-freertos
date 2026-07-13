@@ -215,6 +215,7 @@ void st7789_init(void)
 void platform_init(void)
 {
 
+#if 0
   // --- SPI1: mode 0, MSB first, 8-bit data ---
   spi_init(DISP_SPI, DISP_SPI_BAUD);
   spi_set_format(DISP_SPI, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
@@ -239,4 +240,5 @@ void platform_init(void)
   // --- BL (backlight, active-high) ---
   gpio_init(DISP_BL_PIN);
   gpio_set_dir(DISP_BL_PIN, GPIO_OUT);
+#endif
 }
