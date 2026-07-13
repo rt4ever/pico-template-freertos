@@ -85,24 +85,15 @@ add_executable(pico-template-freertos
     src/tusb_task.c
     src/app_disp_task.c
     src/platform_hw.c
-    src/pio_ctrl.c
     src/display_test.c
 
-    src/i3c/phy/bitbang_i3c.c
-    src/i3c/i3c_sdr.c
-    src/i3c/i3c_ccc.c
 )
 
 
-# Compile .pio → .pio.h via pioasm
-pico_generate_pio_header(pico-template-freertos 
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/pio/pio_i3c.pio
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/pio/pio_toggle.pio
-  )
+
 
 target_include_directories(pico-template-freertos PRIVATE
         include/
-        include/i3c
         ${CMAKE_CURRENT_BINARY_DIR}/generated
         lvgl
         )

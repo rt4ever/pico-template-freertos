@@ -16,7 +16,6 @@
 #include "lvgl.h"
 #include "build_info.h"
 
-#include "i3c_sdr.h"
 
 //--------------------------------------------------------------------+
 // Binary info declarations (readable via picotool info)
@@ -45,12 +44,6 @@ int main(void)
 
   //from specifi hardware
   platform_init();
-
-  //pio
-  pio_inst_init();
-
-  //i3c
-  i3c_sdr_init();
 
   tusb_init();
   stdio_uart_init();
